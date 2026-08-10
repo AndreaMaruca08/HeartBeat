@@ -1,38 +1,30 @@
 import nv.core.ContextBuilder;
 import nv.core.components.NvCont;
-import nv.core.graphic.NvGraphic;
-import nv.core.io.AudioManager;
-import nv.test.game.example.AnimationTest;
-import nv.test.game.example.CustomCharacter;
-import nv.test.game.example.Wall;
+import view.Cpu;
+import view.Dashboard;
+import view.Option;
+import view.WindowFrame;
+
+import java.awt.*;
+import java.util.List;
 
 void main() {
-    // build the game
-    var context = new ContextBuilder("TEST")
+    var context = new ContextBuilder("HeartBeat")
             .setVsync(true)
             .build();
-    // first page
 
-    var page = context.addAndSetPage("NewPage", NvCont.newPage());
-    page.setBackground(1f,0.5f,0.5f);
+    var page = context.addAndSetPage("MainPage", NvCont.newPage());
+    page.setBackground(0,0,0);
+    WindowFrame frame = new WindowFrame();
 
-    AnimationTest sprite = new AnimationTest(1000,500, 100, 100);
-    page.addChild(sprite);
+    List<Option> options = List.of(
+            new Dashboard(),
+            new Cpu()
+    );
+    context.changeFont(new Font("monospaced", Font.PLAIN, (int) (context.getRenderWidth()*0.015)));
 
-    CustomCharacter character = new CustomCharacter(1000,500, 100, 100, 1000);
-    character.setNeedCamera(true);
-    context.setKeyboardFocus(character);
-    NvGraphic.setCurrentCamera(character.getCamera());
-    character.setWeight(100);
+    frame.setOptions(options);
+    page.addChild(frame);
 
-    // audio loading so that it does not create latency during gameplay
-    AudioManager.load("dialtone.mp3");
-    AudioManager.setVolume("dialtone.mp3", 100);
-
-    // add components to the page
-    page.addChild(new Wall(300,300,1000,30));
-    page.addChild(character);
-
-    // run the game
     context.run();
 }

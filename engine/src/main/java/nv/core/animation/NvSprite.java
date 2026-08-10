@@ -16,11 +16,11 @@ import nv.core.graphic.NvGraphic;
 @EngineCore
 @SuppressWarnings("unused")
 public class NvSprite extends NvComp {
-    private final String atlasName;
-    private final String defaultSpriteFileName;
-    private String spriteFileName;
-    private AtlasConverter.Region region;
-    private final NvImage atlasImage;
+    protected final String atlasName;
+    protected final String defaultSpriteFileName;
+    protected String spriteFileName;
+    protected AtlasConverter.Region region;
+    protected final NvImage atlasImage;
 
     public NvSprite(int x, int y, int w, int h, NvImage atlasImage, String atlasName, String spriteFileName) {
         super(x, y, w, h);
