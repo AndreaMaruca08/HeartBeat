@@ -115,7 +115,7 @@ public class Dashboard extends Option {
 
         this.tempLabel = new NvLabel(
                 (int) (heart.getX() * 1.2f),
-                (int) (heart.getY() * 0.4f)
+                (int) (heart.getY() * 0.7f)
         );
 
         cpuBarLabel.changeText("");
@@ -152,6 +152,8 @@ public class Dashboard extends Option {
         NvContext.getInstance().addUpdatable(updateTimer);
 
         updateTimer.setOnFinished(() -> {
+            if(!isActive())
+                return;
             upd();
             NvContext.markSceneDirty();
         });
@@ -164,11 +166,7 @@ public class Dashboard extends Option {
         cpuTemp = Monitoring.getCpuTemperature();
         ramUsage = Monitoring.getRamUsagePercent();
 
-        diskUsage =
-                100.0 - (
-                        Monitoring.getUsableDiskSpaceBytes() * 100.0
-                                / Monitoring.getTotalDiskSpaceBytes()
-                );
+        diskUsage = 100.0 - (Monitoring.getUsableDiskSpaceBytes() * 100.0 / Monitoring.getTotalDiskSpaceBytes());
 
         cpuBarLabel.changeText(String.format("%.1f %%", cpuUsage));
         ramBarLabel.changeText(String.format("%.1f %%", ramUsage));
@@ -178,11 +176,7 @@ public class Dashboard extends Option {
         ramBar.setValue((float) ramUsage);
         diskBar.setValue((float) diskUsage);
 
-        tempLabel.changeText(
-                cpuTemp > 0
-                        ? String.format("%.1f C", cpuTemp)
-                        : ""
-        );
+        tempLabel.changeText(cpuTemp > 0 ? String.format("%.1f C", cpuTemp): "");
 
         long uptime = Monitoring.getSystemUptimeSeconds();
 
@@ -194,10 +188,14 @@ public class Dashboard extends Option {
         );
     }
 
+    private final String os = Monitoring.getOsFullName();
+
     @Override
     public void drawIntern(NvGraphic g) {
         if (!isActive())
             return;
+
+        g.drawText(os, 50, 50);
 
         heart.draw(g);
 
@@ -215,6 +213,7 @@ public class Dashboard extends Option {
 
         tempLabel.draw(g);
         uptimeLabel.draw(g);
+
 
         markDirty();
     }

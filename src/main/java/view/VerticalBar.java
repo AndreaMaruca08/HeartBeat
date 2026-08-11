@@ -167,9 +167,6 @@ public class VerticalBar extends NvComp {
             }
         }
 
-        /*
-         * Border
-         */
         if (borderThickness > 0.0f) {
             g.drawRectBorder(
                     0,

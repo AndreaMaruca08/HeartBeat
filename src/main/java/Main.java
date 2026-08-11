@@ -2,10 +2,7 @@ import nv.core.ContextBuilder;
 import nv.core.ScreenSize;
 import nv.core.components.NvCont;
 import nv.core.io.AudioManager;
-import view.Cpu;
-import view.Dashboard;
-import view.Option;
-import view.WindowFrame;
+import view.*;
 
 import java.awt.*;
 import java.util.List;
@@ -14,7 +11,7 @@ void main() {
     var context = new ContextBuilder("HeartBeat")
             .setVsync(true)
             .build();
-    context.changeFont(new Font("monospaced", Font.PLAIN, (int) (context.getRenderWidth()*0.015)));
+    context.changeFont(new Font("monospaced", Font.PLAIN, (int) (context.getRenderWidth()*0.013)));
 
     var page = context.addAndSetPage("MainPage", NvCont.newPage());
     page.setBackground(0,0,0);
@@ -25,7 +22,10 @@ void main() {
 
     List<Option> options = List.of(
             new Dashboard(),
-            new Cpu()
+            new Cpu(),
+            new Ram(),
+            new Gpu(),
+            new Sensors()
     );
 
     frame.setOptions(options);
