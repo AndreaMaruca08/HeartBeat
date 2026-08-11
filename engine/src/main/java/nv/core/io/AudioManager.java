@@ -329,6 +329,15 @@ public final class AudioManager {
         AL10.alSourcei(sourceId, AL10.AL_LOOPING, AL10.AL_TRUE);
         AL10.alSourcePlay(sourceId);
     }
+    public static void play(String filePath) {
+        int sourceId = getOrCreateSource(PREFIX + filePath);
+
+        if (sourceId == -1) {
+            return;
+        }
+
+        AL10.alSourcePlay(sourceId);
+    }
 
     /**
      * Stops playback for a specific audio file.
