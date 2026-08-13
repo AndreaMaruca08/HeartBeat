@@ -79,7 +79,7 @@ public final class AudioManager {
             return;
         }
 
-        org.lwjgl.openal.ALCCapabilities alcCapabilities = ALC.createCapabilities(audioDevice);
+        ALCCapabilities alcCapabilities = ALC.createCapabilities(audioDevice);
         audioContext = ALC10.alcCreateContext(audioDevice, (int[]) null);
 
         if (audioContext == 0) {
@@ -143,7 +143,7 @@ public final class AudioManager {
 
     public static void loadExternal(String filePath) {
 
-        String fullPath = new java.io.File(filePath)
+        String fullPath = new File(filePath)
                 .getAbsolutePath();
 
         if (bufferCache.containsKey(fullPath)) {
@@ -329,15 +329,6 @@ public final class AudioManager {
         AL10.alSourcei(sourceId, AL10.AL_LOOPING, AL10.AL_TRUE);
         AL10.alSourcePlay(sourceId);
     }
-    public static void play(String filePath) {
-        int sourceId = getOrCreateSource(PREFIX + filePath);
-
-        if (sourceId == -1) {
-            return;
-        }
-
-        AL10.alSourcePlay(sourceId);
-    }
 
     /**
      * Stops playback for a specific audio file.
@@ -444,6 +435,20 @@ public final class AudioManager {
 
         AL10.alSourcef(sourceId, AL11.AL_SEC_OFFSET, targetSec);
     }
+    /**
+     * Plays an audio
+     *
+     * @param filePath audio file
+     */
+    public static void play(String filePath) {
+        int sourceId = getOrCreateSource(PREFIX + filePath);
+
+        if (sourceId == -1) {
+            return;
+        }
+        AL10.alSourcePlay(sourceId);
+    }
+
 
     /**
      * Computes current playback progress (0-100) for the source/buffer at the given cache key.
@@ -536,7 +541,7 @@ public final class AudioManager {
             throw new IllegalArgumentException("Volume must be between 0 and 100");
         }
 
-        String fullPath = new java.io.File(filePath)
+        String fullPath = new File(filePath)
                 .getAbsolutePath();
 
         float gain = volume / 100f;

@@ -8,7 +8,7 @@ import nv.core.data.NvImage;
 import nv.core.graphic.NvGraphic;
 
 /**
- * Special component with sprite embedded can be used for animation with {@link nv.core.animation.NvAnimation}
+ * Special component with sprite embedded can be used for animation with {@link NvAnimation}
  *
  * @author Andrea Maruca
  * @since 1.3
@@ -16,11 +16,11 @@ import nv.core.graphic.NvGraphic;
 @EngineCore
 @SuppressWarnings("unused")
 public class NvSprite extends NvComp {
-    protected final String atlasName;
-    protected final String defaultSpriteFileName;
-    protected String spriteFileName;
-    protected AtlasConverter.Region region;
-    protected final NvImage atlasImage;
+    private final String atlasName;
+    private final String defaultSpriteFileName;
+    private String spriteFileName;
+    private AtlasConverter.Region region;
+    private final NvImage atlasImage;
 
     public NvSprite(int x, int y, int w, int h, NvImage atlasImage, String atlasName, String spriteFileName) {
         super(x, y, w, h);
