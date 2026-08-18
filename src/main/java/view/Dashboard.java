@@ -260,6 +260,7 @@ public class Dashboard extends Option {
         heart.setY((int) y);
         heart.setW((int) size);
         heart.setH((int) size);
+        markDirty();
     }
 
     @Override

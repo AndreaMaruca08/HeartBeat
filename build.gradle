@@ -16,7 +16,7 @@ plugins {
 group = 'not specified'
 version = '1.2'
 
-project.ext.lwjglVersion = "3.4.1"
+project.ext.lwjglVersion = "3.4.2"
 project.ext.currentOs = org.gradle.internal.os.OperatingSystem.current()
 
 // Platform finder
@@ -57,14 +57,18 @@ sourceSets {
         }
     }
 }
-
 tasks.withType(JavaExec) {
     if (project.ext.currentOs.isMacOsX()) {
         jvmArgs += ["-XstartOnFirstThread"]
     }
-    jvmArgs += ["--enable-native-access=ALL-UNNAMED"]
+    jvmArgs += [
+            "--enable-native-access=ALL-UNNAMED",
+            "--sun-misc-unsafe-memory-access=allow"
+    ]
+//    systemProperty 'org.lwjgl.util.Debug', 'true'
+//    systemProperty 'org.lwjgl.util.DebugLoader', 'true'
+//    systemProperty 'org.lwjgl.system.linker.debug', 'true'
 }
-
 tasks.named('jar') {
     manifest {
         attributes('Main-Class': 'Main')
@@ -94,6 +98,8 @@ void registerNvBuild(String taskName, String platform, Object extraCfg) {
 
         archiveClassifier.set(platform)
 
+        mergeServiceFiles()
+
         manifest {
             attributes 'Main-Class': 'Main'
         }
@@ -113,6 +119,8 @@ tasks.register('nvBuildCurrent', ShadowJar) {
     configurations = [project.configurations.runtimeClasspath]
 
     archiveClassifier.set(project.ext.lwjglNatives as String)
+
+    mergeServiceFiles()
 
     manifest {
         attributes 'Main-Class': 'Main'
@@ -140,6 +148,7 @@ tasks.register('nvBuildAll', ShadowJar) {
     configurations = [project.configurations.runtimeClasspath] + allNativesCfgs
 
     archiveClassifier.set('universal')
+    mergeServiceFiles()
 
     manifest {
         attributes 'Main-Class': 'Main'
@@ -160,6 +169,35 @@ tasks.register('nvBuild') {
         println '✅ Build completed for every platform'
         println '📦 Output in: ' + layout.buildDirectory.dir('libs').get().asFile.absolutePath
     }
+}
+
+tasks.register('nvBenchmark', JavaExec) {
+    group = 'nv bench'
+    description = 'Avvia il benchmark da engine/src/main/java/nv/test/benchmark/BenchmarkMain.java'
+
+    classpath = sourceSets.main.runtimeClasspath + project(':engine').sourceSets.main.output
+
+    mainClass = 'BenchmarkMain'
+
+    if (project.ext.currentOs.isMacOsX()) {
+        jvmArgs += ['-XstartOnFirstThread']
+    }
+
+    jvmArgs += [
+            '--enable-native-access=ALL-UNNAMED',
+            '--sun-misc-unsafe-memory-access=allow'
+    ]
+}
+
+tasks.register('testEngine') {
+    group = 'verification'
+    description = 'Esegue i test JUnit del modulo engine'
+    dependsOn ':engine:test'
+}
+
+tasks.register('nvTest') {
+    group = 'nv test'
+    dependsOn ':engine:test'
 }
 
 tasks.register('generateIcns') {
@@ -409,7 +447,10 @@ tasks.register('nvPackageMacFallback') {
         def scriptFile = new File(outDir, 'run-mac.sh')
         scriptFile.text = """#!/bin/bash
 cd "\$(dirname "\$0")"
-java -XstartOnFirstThread --enable-native-access=ALL-UNNAMED -jar ${macJar.name}
+java -XstartOnFirstThread --enable-native-access=ALL-UNNAMED \\
+     --add-opens java.base/java.lang=ALL-UNNAMED \\
+     --add-opens java.base/sun.misc=ALL-UNNAMED \\
+     -jar ${macJar.name}
 """
         scriptFile.setExecutable(true)
 
@@ -423,7 +464,11 @@ launch4j {
     outfile = "${project.name}.exe"
     mainClassName = 'Main'
     icon = "${project.projectDir}/src/main/resources/gameicon/gameIcon.ico"
-    jvmOptions = ['--enable-native-access=ALL-UNNAMED']
+    jvmOptions = [
+            '--enable-native-access=ALL-UNNAMED',
+            '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
+            '--add-opens', 'java.base/sun.misc=ALL-UNNAMED'
+    ]
     outputDir = "dist/${project.name}"
     libraryDir = '.'
 }

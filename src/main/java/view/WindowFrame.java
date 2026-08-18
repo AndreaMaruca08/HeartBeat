@@ -15,6 +15,7 @@ public class WindowFrame extends NvComp {
     public WindowFrame() {
         var ctx = NvContext.getInstance();
         super(0,0, (int) ctx.getRenderWidth()/6, (int) ctx.getRenderHeight());
+        ctx.getCurrentPage().addChild(this);
     }
 
     public void setOptions(List<Option> options) {

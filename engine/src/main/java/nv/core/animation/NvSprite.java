@@ -8,7 +8,7 @@ import nv.core.data.NvImage;
 import nv.core.graphic.NvGraphic;
 
 /**
- * Special component with sprite embedded can be used for animation with {@link NvAnimation}
+ * Special component with sprite embedded can be used for animation with {@link nv.core.animation.NvAnimation}
  *
  * @author Andrea Maruca
  * @since 1.3
